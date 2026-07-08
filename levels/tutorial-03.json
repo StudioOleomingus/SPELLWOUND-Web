@@ -1,0 +1,78 @@
+{
+  "id": "tutorial-03",
+  "title": "Clues",
+  "author": "Oleomingus",
+  "levelNumber": 2,
+  "gridWidth": 15,
+  "gridHeight": 9,
+  "playCells": [
+    { "x": 6, "y": 2, "letter": "C" },
+    { "x": 7, "y": 2, "letter": "O" },
+    { "x": 8, "y": 2, "letter": "L" },
+    { "x": 9, "y": 2, "letter": "D" },
+    { "x": 6, "y": 3, "letter": "U" },
+    { "x": 6, "y": 4, "letter": "T" }
+  ],
+  "trains": [
+    {
+      "id": "blue",
+      "color": "#29abe2",
+      "letters": ["C", "O"],
+      "start": [
+        { "x": 4, "y": 4 },
+        { "x": 5, "y": 4 }
+      ]
+    },
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": ["D", "L"],
+      "start": [
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 6 }
+      ]
+    },
+    {
+      "id": "brown",
+      "color": "#b09272",
+      "letters": ["U", "T"],
+      "start": [
+        { "x": 7, "y": 4 },
+        { "x": 8, "y": 4 }
+      ]
+    }
+  ],
+  "hints": [
+    { "cell": { "x": 6, "y": 2 }, "trainId": "blue", "end": "head" },
+    { "cell": { "x": 9, "y": 2 }, "trainId": "green", "end": "head" },
+    { "cell": { "x": 6, "y": 3 }, "trainId": "brown", "end": "head" },
+    { "cell": { "x": 7, "y": 2 }, "trainId": "blue", "end": "tail" },
+    { "cell": { "x": 8, "y": 2 }, "trainId": "green", "end": "tail" },
+    { "cell": { "x": 6, "y": 4 }, "trainId": "brown", "end": "tail" }
+  ],
+  "defaultVisibleHints": 2,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 7, "y": 2 },
+        { "x": 8, "y": 2 },
+        { "x": 9, "y": 2 }
+      ],
+      "answer": "COLD",
+      "text": "Like ice, or an unfriendly stare"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 6, "y": 3 },
+        { "x": 6, "y": 4 }
+      ],
+      "answer": "CUT",
+      "text": "Slice, trim, or skip a class"
+    }
+  ],
+  "tutorialText": "CLICK ON ANY EMPTY GRID BLOCK IN THE PUZZLE TO VIEW A CROSSWORD-CLUE.\nCLICK TWICE ON BLOCKS AT INTERSECTIONS, TO GET A CLUE FOR THE ROW AND THEN FOR THE COLUMN.\n\nFOR HELP DURING THE GAME, CLICK ON THE ? BUTTON IN THE TOP LEFT CORNER."
+}

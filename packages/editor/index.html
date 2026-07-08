@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spellwound Editor</title>
+  </head>
+  <body>
+    <div id="editor">
+      <div id="stage">
+        <canvas id="board"></canvas>
+        <div id="stage-banner" hidden></div>
+      </div>
+      <aside id="panel">
+        <h1 class="panel-title">SPELLWOUND EDITOR</h1>
+
+        <section>
+          <h2>PUZZLE</h2>
+          <div class="row"><label>ID</label><input id="meta-id" /></div>
+          <div class="row"><label>TITLE</label><input id="meta-title" /></div>
+          <div class="row">
+            <label>NUMBER</label><input id="meta-number" type="number" min="0" />
+            <label>HINTS</label><input id="meta-hints" type="number" min="0" title="Triangles visible at start" />
+          </div>
+          <div class="row">
+            <label>GRID W</label><input id="meta-w" type="number" min="5" max="30" />
+            <label>H</label><input id="meta-h" type="number" min="5" max="30" />
+          </div>
+        </section>
+
+        <section>
+          <h2>TOOLS</h2>
+          <div id="tools" class="tool-row">
+            <button data-tool="slot" class="tool active">SLOT</button>
+            <button data-tool="train" class="tool">TRAIN</button>
+            <button data-tool="track" class="tool">TRACK</button>
+            <button data-tool="erase" class="tool">ERASE</button>
+          </div>
+          <p id="tool-hint" class="small"></p>
+        </section>
+
+        <section>
+          <h2>TRAINS</h2>
+          <div id="train-list"></div>
+        </section>
+
+        <section>
+          <h2>CLUES</h2>
+          <div id="clue-list"></div>
+        </section>
+
+        <section>
+          <h2>CHECKS</h2>
+          <div id="validation" class="small"></div>
+          <button id="solve-btn" class="action">CHECK SOLVABLE</button>
+          <span id="solve-result" class="small"></span>
+        </section>
+
+        <section>
+          <h2>ACTIONS</h2>
+          <div class="tool-row">
+            <button id="play-btn" class="action">TEST PLAY</button>
+            <button id="export-btn" class="action">EXPORT</button>
+            <button id="share-btn" class="action">SHARE</button>
+            <button id="new-btn" class="action danger">NEW</button>
+          </div>
+          <textarea
+            id="io-area"
+            rows="4"
+            placeholder="Paste puzzle JSON here to import, or copy exported / share output."
+          ></textarea>
+          <div class="tool-row">
+            <button id="import-btn" class="action">IMPORT FROM TEXT</button>
+            <button id="copy-btn" class="action">COPY</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,362 @@
+:root {
+  --ink: #4a4f54;
+  --ink-light: #9aa0a6;
+  --accent: #29abe2;
+  --danger: #e0442f;
+  --line: #e2e2e2;
+  --font: "Segoe UI", "Helvetica Neue", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #fdfdfd;
+  font-family: var(--font);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+}
+
+#board {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  display: block;
+}
+
+/* --- round corner buttons --- */
+.circle-btn {
+  position: absolute;
+  top: calc(18px + env(safe-area-inset-top));
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-light);
+  background: transparent;
+  color: var(--ink-light);
+  font-size: 19px;
+  font-family: var(--font);
+  cursor: pointer;
+  line-height: 1;
+  z-index: 20;
+  padding: 0;
+}
+
+.circle-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+#help-btn {
+  left: calc(20px + env(safe-area-inset-left));
+}
+
+#level-badge {
+  right: calc(20px + env(safe-area-inset-right));
+  font-size: 16px;
+  letter-spacing: 0.05em;
+}
+
+/* --- tutorial callout --- */
+#tutorial-box {
+  position: absolute;
+  top: calc(52px + env(safe-area-inset-top));
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(1100px, calc(100% - 160px));
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  background: rgba(253, 253, 253, 0.94);
+  padding: 20px 34px;
+  font-size: 14.5px;
+  letter-spacing: 0.06em;
+  line-height: 1.75;
+  text-align: center;
+  text-transform: uppercase;
+  z-index: 15;
+  white-space: pre-line;
+}
+
+/* --- clue popover --- */
+#clue-popover {
+  position: absolute;
+  border: 1.5px solid var(--accent);
+  background: #fff;
+  color: var(--accent);
+  padding: 10px 16px;
+  font-size: 13.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  max-width: 320px;
+  z-index: 25;
+  pointer-events: none;
+  box-shadow: 0 3px 14px rgba(40, 90, 140, 0.12);
+}
+
+#clue-popover .dir {
+  color: var(--ink-light);
+  font-size: 11px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* --- bottom bar --- */
+#bottom-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px calc(20px + env(safe-area-inset-bottom));
+  z-index: 20;
+  pointer-events: none;
+}
+
+.bar-group {
+  display: flex;
+  gap: 34px;
+  pointer-events: auto;
+}
+
+.bar-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ink-light);
+  font-family: var(--font);
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  padding: 10px 2px;
+}
+
+.bar-btn:hover {
+  color: var(--ink);
+}
+
+.bar-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.bar-btn.next {
+  color: var(--danger);
+}
+
+#move-counter {
+  color: #c9cdd1;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+}
+
+/* --- full-screen overlays (menu / levels / help) --- */
+.screen {
+  position: absolute;
+  inset: 0;
+  background: #fdfdfd;
+  z-index: 40;
+  overflow-y: auto;
+}
+
+.circle-btn.close {
+  left: calc(20px + env(safe-area-inset-left));
+  font-size: 24px;
+}
+
+.menu-inner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.game-title {
+  color: var(--ink);
+  font-size: clamp(30px, 7vw, 52px);
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  margin: 0 0 4px 0.32em; /* offset the trailing letter-space */
+}
+
+.tagline {
+  color: var(--ink-light);
+  font-size: 12.5px;
+  letter-spacing: 0.24em;
+  margin: 0 0 38px;
+}
+
+.menu-btn {
+  border: 1.5px solid var(--ink-light);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  letter-spacing: 0.22em;
+  padding: 14px 0;
+  width: min(280px, 76vw);
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.menu-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.screen-title {
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  margin: 0 0 34px 0.3em;
+}
+
+#level-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  max-width: 560px;
+}
+
+.level-cell {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-light);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.level-cell .num {
+  font-size: 19px;
+  letter-spacing: 0.06em;
+}
+
+.level-cell .best {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-light);
+}
+
+.level-cell:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.level-cell.done {
+  background: #41474c;
+  border-color: #41474c;
+  color: #f4efe3;
+}
+
+.level-cell.done .best {
+  color: #b8bcbf;
+}
+
+.level-cell.locked {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.level-cell.locked:hover {
+  border-color: var(--ink-light);
+  color: var(--ink);
+}
+
+/* --- help overlay content --- */
+.help-content {
+  max-width: 880px;
+  margin: 12vh auto 8vh;
+  padding: 0 34px;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.help-content h1 {
+  color: var(--accent);
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  margin-bottom: 2.4em;
+  font-weight: 600;
+}
+
+.help-content p {
+  margin: 0 0 2.2em;
+}
+
+.help-content .hl {
+  color: var(--accent);
+}
+
+/* --- mobile portrait --- */
+@media (max-width: 700px) {
+  #tutorial-box {
+    max-width: calc(100% - 20px);
+    top: calc(72px + env(safe-area-inset-top));
+    font-size: 12px;
+    padding: 12px 14px;
+    line-height: 1.6;
+  }
+
+  #bottom-bar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .bar-group {
+    gap: 18px;
+  }
+
+  .bar-btn {
+    font-size: 14px;
+    letter-spacing: 0.1em;
+  }
+
+  #move-counter {
+    display: none;
+  }
+
+  .circle-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  #clue-popover {
+    max-width: 240px;
+    font-size: 12px;
+  }
+
+  .level-cell {
+    width: 60px;
+    height: 60px;
+  }
+}

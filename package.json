@@ -1,0 +1,17 @@
+{
+  "name": "spellwound",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm --workspace @spellwound/player run dev",
+    "dev:editor": "npm --workspace @spellwound/editor run dev",
+    "build": "npm --workspace @spellwound/player run build && npm --workspace @spellwound/editor run build",
+    "build:player": "npm --workspace @spellwound/player run build",
+    "build:editor": "npm --workspace @spellwound/editor run build",
+    "preview": "npm --workspace @spellwound/player run preview",
+    "test": "npm --workspace @spellwound/core run test"
+  }
+}

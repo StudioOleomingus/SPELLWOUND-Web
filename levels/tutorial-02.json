@@ -1,0 +1,69 @@
+{
+  "id": "tutorial-02",
+  "title": "Add & Remove",
+  "author": "Oleomingus",
+  "levelNumber": 1,
+  "gridWidth": 15,
+  "gridHeight": 9,
+  "playCells": [
+    { "x": 6, "y": 2, "letter": "C" },
+    { "x": 7, "y": 2, "letter": "O" },
+    { "x": 8, "y": 2, "letter": "L" },
+    { "x": 9, "y": 2, "letter": "D" },
+    { "x": 6, "y": 3, "letter": "U" },
+    { "x": 6, "y": 4, "letter": "T" }
+  ],
+  "trains": [
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": ["D", "L", "O", "C"],
+      "start": [
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 6 },
+        { "x": 6, "y": 7 },
+        { "x": 7, "y": 7 }
+      ]
+    },
+    {
+      "id": "blue",
+      "color": "#29abe2",
+      "letters": ["T", "U"],
+      "start": [
+        { "x": 4, "y": 4 },
+        { "x": 5, "y": 4 }
+      ]
+    }
+  ],
+  "hints": [
+    { "cell": { "x": 9, "y": 2 }, "trainId": "green", "end": "head" },
+    { "cell": { "x": 6, "y": 4 }, "trainId": "blue", "end": "head" },
+    { "cell": { "x": 6, "y": 2 }, "trainId": "green", "end": "tail" },
+    { "cell": { "x": 6, "y": 3 }, "trainId": "blue", "end": "tail" }
+  ],
+  "defaultVisibleHints": 2,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 7, "y": 2 },
+        { "x": 8, "y": 2 },
+        { "x": 9, "y": 2 }
+      ],
+      "answer": "COLD",
+      "text": "Like ice, or an unfriendly stare"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 6, "y": 3 },
+        { "x": 6, "y": 4 }
+      ],
+      "answer": "CUT",
+      "text": "Slice, trim, or skip a class"
+    }
+  ],
+  "tutorialText": "CLICK ON ADD IN THE BOTTOM LEFT CORNER, TO POPULATE MORE TRIANGLES, THESE INDICATE POSITIONS -\n- ON THE GRID WHERE THE HEAD & TAIL BLOCKS FOR EACH TRAIN IN THE PUZZLE ARE SUPPOSED TO GO."
+}

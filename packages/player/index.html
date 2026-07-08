@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#fdfdfd" />
+    <title>Spellwound</title>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="board"></canvas>
+
+      <button id="help-btn" class="circle-btn" title="Help">?</button>
+      <button id="level-badge" class="circle-btn" title="Levels">00</button>
+
+      <div id="tutorial-box" hidden></div>
+      <div id="clue-popover" hidden></div>
+
+      <div id="bottom-bar">
+        <div class="bar-group">
+          <button id="add-btn" class="bar-btn">ADD</button>
+          <button id="remove-btn" class="bar-btn">REMOVE</button>
+        </div>
+        <div id="move-counter" title="Moves">MOVES 00</div>
+        <div class="bar-group">
+          <button id="reset-btn" class="bar-btn">RESET</button>
+          <button id="skip-btn" class="bar-btn">SKIP</button>
+          <button id="next-btn" class="bar-btn next" hidden>NEXT</button>
+        </div>
+      </div>
+
+      <div id="menu-overlay" class="screen">
+        <div class="menu-inner">
+          <h1 class="game-title">SPELLWOUND</h1>
+          <p class="tagline">A CROSSWORD OF SLIDING LETTER-TRAINS</p>
+          <button id="menu-play" class="menu-btn">PLAY</button>
+          <button id="menu-levels" class="menu-btn">LEVELS</button>
+          <button id="menu-how" class="menu-btn">HOW TO PLAY</button>
+        </div>
+      </div>
+
+      <div id="levels-overlay" class="screen" hidden>
+        <button id="levels-close" class="circle-btn close">&times;</button>
+        <div class="menu-inner">
+          <h2 class="screen-title">LEVELS</h2>
+          <div id="level-grid"></div>
+        </div>
+      </div>
+
+      <div id="help-overlay" class="screen" hidden>
+        <button id="help-close" class="circle-btn close">&times;</button>
+        <div class="help-content">
+          <h1>COMPLETE THE CROSSWORD BY SLIDING LETTER-TRAINS INTO POSITION</h1>
+          <p>
+            <strong>CLICK AND DRAG</strong> A HEAD OR A TAIL INTO AN EMPTY BLOCK TO MOVE A TRAIN.
+            <span class="hl">A HEAD / TAIL IS A BLOCK AT THE <strong>START</strong> OR AT
+            <strong>END</strong> OF A TRAIN - THEY EACH HAVE AN EMPTY TRIANGULAR HOLE OR A
+            <strong>NOTCH</strong> IN THEM.</span>
+          </p>
+          <p>YOU CAN ONLY <strong>PULL</strong> A TRAIN INTO AN EMPTY SPACE NOT PUSH IT.</p>
+          <p>
+            TRAINS TRAVEL ONLY ON THE DOTTED TRACK - THE CROSSWORD BLOCKS AND THE GRAY
+            BLOCKS WHERE TRAINS BEGIN. THE REST OF THE GRID IS SCENERY.
+          </p>
+          <p>
+            THE TRAINS SLOT INTO SPECIFIC POSITIONS ON THE GRID TO FORM WORDS -
+            AND <strong>THE COLOURED TRIANGLES ON THE EMPTY GRID ARE MARKS THAT SHOW WHERE EACH
+            HEAD OR TAIL OF A TRAIN IS SUPPOSED TO SLOT.</strong> WHEN A HEAD OR TAIL RESTS ON
+            ITS MARK, ITS NOTCH FILLS IN.
+          </p>
+          <p>
+            THE <strong>ADD &amp; REMOVE</strong> ON THE BOTTOM LEFT WILL ADD OR REMOVE THESE
+            COLOURED TRIANGLES. <span class="hl">ADDING TRIANGLES TO THE GRID WILL MAKE THE PUZZLE
+            EASIER (IF YOU ARE STUCK) AND REMOVING THEM WILL MAKE IT HARDER (IF YOU LIKE A
+            CHALLENGE).</span>
+          </p>
+          <p>
+            LIKE ANY TYPICAL CROSSWORD, YOU CAN CLICK ON <strong>AN EMPTY GRID BLOCK</strong>
+            TO GET A CROSSWORD CLUE.
+          </p>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

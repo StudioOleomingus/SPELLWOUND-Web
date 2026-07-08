@@ -1,0 +1,68 @@
+{
+  "id": "level-05",
+  "title": "Moon & Mat",
+  "author": "Oleomingus",
+  "levelNumber": 4,
+  "gridWidth": 15,
+  "gridHeight": 9,
+  "playCells": [
+    { "x": 6, "y": 2, "letter": "M" },
+    { "x": 7, "y": 2, "letter": "O" },
+    { "x": 8, "y": 2, "letter": "O" },
+    { "x": 9, "y": 2, "letter": "N" },
+    { "x": 6, "y": 3, "letter": "A" },
+    { "x": 6, "y": 4, "letter": "T" }
+  ],
+  "trains": [
+    {
+      "id": "blue",
+      "color": "#29abe2",
+      "letters": ["N", "O", "O"],
+      "start": [
+        { "x": 5, "y": 2 },
+        { "x": 4, "y": 2 },
+        { "x": 3, "y": 2 }
+      ]
+    },
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": ["M", "A", "T"],
+      "start": [
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 6 },
+        { "x": 6, "y": 7 }
+      ]
+    }
+  ],
+  "hints": [
+    { "cell": { "x": 9, "y": 2 }, "trainId": "blue", "end": "head" },
+    { "cell": { "x": 6, "y": 2 }, "trainId": "green", "end": "head" },
+    { "cell": { "x": 7, "y": 2 }, "trainId": "blue", "end": "tail" },
+    { "cell": { "x": 6, "y": 4 }, "trainId": "green", "end": "tail" }
+  ],
+  "defaultVisibleHints": 2,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 7, "y": 2 },
+        { "x": 8, "y": 2 },
+        { "x": 9, "y": 2 }
+      ],
+      "answer": "MOON",
+      "text": "It pulls the ocean's tides"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 6, "y": 3 },
+        { "x": 6, "y": 4 }
+      ],
+      "answer": "MAT",
+      "text": "You wipe your feet on it"
+    }
+  ]
+}

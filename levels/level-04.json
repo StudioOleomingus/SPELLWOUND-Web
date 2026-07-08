@@ -1,0 +1,68 @@
+{
+  "id": "level-04",
+  "title": "Star & Sun",
+  "author": "Oleomingus",
+  "levelNumber": 3,
+  "gridWidth": 15,
+  "gridHeight": 9,
+  "playCells": [
+    { "x": 6, "y": 2, "letter": "S" },
+    { "x": 7, "y": 2, "letter": "T" },
+    { "x": 8, "y": 2, "letter": "A" },
+    { "x": 9, "y": 2, "letter": "R" },
+    { "x": 6, "y": 3, "letter": "U" },
+    { "x": 6, "y": 4, "letter": "N" }
+  ],
+  "trains": [
+    {
+      "id": "blue",
+      "color": "#29abe2",
+      "letters": ["S", "U", "N"],
+      "start": [
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 6 },
+        { "x": 6, "y": 7 }
+      ]
+    },
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": ["T", "A", "R"],
+      "start": [
+        { "x": 9, "y": 3 },
+        { "x": 9, "y": 4 },
+        { "x": 9, "y": 5 }
+      ]
+    }
+  ],
+  "hints": [
+    { "cell": { "x": 7, "y": 2 }, "trainId": "green", "end": "head" },
+    { "cell": { "x": 6, "y": 2 }, "trainId": "blue", "end": "head" },
+    { "cell": { "x": 9, "y": 2 }, "trainId": "green", "end": "tail" },
+    { "cell": { "x": 6, "y": 4 }, "trainId": "blue", "end": "tail" }
+  ],
+  "defaultVisibleHints": 2,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 7, "y": 2 },
+        { "x": 8, "y": 2 },
+        { "x": 9, "y": 2 }
+      ],
+      "answer": "STAR",
+      "text": "It twinkles in the night sky"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 6, "y": 3 },
+        { "x": 6, "y": 4 }
+      ],
+      "answer": "SUN",
+      "text": "It rises in the east"
+    }
+  ]
+}

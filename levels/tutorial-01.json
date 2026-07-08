@@ -1,0 +1,60 @@
+{
+  "id": "tutorial-01",
+  "title": "Pull",
+  "author": "Oleomingus",
+  "levelNumber": 0,
+  "gridWidth": 15,
+  "gridHeight": 9,
+  "playCells": [
+    { "x": 6, "y": 2, "letter": "C" },
+    { "x": 7, "y": 2, "letter": "O" },
+    { "x": 8, "y": 2, "letter": "L" },
+    { "x": 9, "y": 2, "letter": "D" },
+    { "x": 6, "y": 3, "letter": "U" },
+    { "x": 6, "y": 4, "letter": "T" }
+  ],
+  "trains": [
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": ["D", "L", "O", "C", "U", "T"],
+      "start": [
+        { "x": 6, "y": 5 },
+        { "x": 6, "y": 6 },
+        { "x": 6, "y": 7 },
+        { "x": 7, "y": 7 },
+        { "x": 8, "y": 7 },
+        { "x": 8, "y": 8 }
+      ]
+    }
+  ],
+  "hints": [
+    { "cell": { "x": 9, "y": 2 }, "trainId": "green", "end": "head" },
+    { "cell": { "x": 6, "y": 4 }, "trainId": "green", "end": "tail" }
+  ],
+  "defaultVisibleHints": 1,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 7, "y": 2 },
+        { "x": 8, "y": 2 },
+        { "x": 9, "y": 2 }
+      ],
+      "answer": "COLD",
+      "text": "Like ice, or an unfriendly stare"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        { "x": 6, "y": 2 },
+        { "x": 6, "y": 3 },
+        { "x": 6, "y": 4 }
+      ],
+      "answer": "CUT",
+      "text": "Slice, trim, or skip a class"
+    }
+  ],
+  "tutorialText": "THE BLOCK WITH THE LETTER D HAS A NOTCH THAT CORRESPONDS TO A TRIANGLE ON THE GRID,\nCLICK & DRAG THE BLOCK TO PULL THE LETTER-TRAIN INTO POSITION AND COMPLETE THE CROSSWORD.\n\nWHEN YOU FINISH A PUZZLE YOU WILL SEE A NEXT BUTTON IN THE BOTTOM RIGHT CORNER TO CONTINUE."
+}
