@@ -8,6 +8,7 @@ import {
   visibleHintMarks,
 } from "@spellwound/core";
 import type { End, GameState, Vec } from "@spellwound/core";
+// (2D board renderer with zoom/pan view transform)
 
 const SOLVED_COLOR = "#41474c";
 const LETTER_COLOR = "#ffffff";
@@ -31,10 +32,28 @@ export interface DragVisual {
  */
 export class Renderer {
   private ctx: CanvasRenderingContext2D;
-  /** Pixel size of one grid cell (CSS px). */
+  /** Effective pixel size of one grid cell (CSS px) — base size × zoom. */
   cell = 64;
-  /** Canvas-space origin of grid cell (0,0), in CSS px. */
+  /** Effective canvas-space origin of grid cell (0,0), in CSS px. */
   origin: Vec = { x: 0, y: 0 };
+
+  // --- view transform (zoom + pan) layered on top of the fit layout ----------
+  /**
+   * The fit-to-viewport values computed by layout(); the "world" (zoom = 1)
+   * cell size and origin. Effective cell/origin are derived from these plus
+   * the current zoom/pan in applyView().
+   */
+  private baseCell = 64;
+  private baseOrigin: Vec = { x: 0, y: 0 };
+  /** Current zoom factor (1 = fit). */
+  zoom = 1;
+  /** Pan offset in screen (CSS px), applied after zoom. */
+  private pan: Vec = { x: 0, y: 0 };
+  private minZoom = 1;
+  private maxZoom = 4;
+  /** Content bounding box (in grid cells) and viewport size, cached by layout. */
+  private view = { minX: 0, minY: 0, bw: 1, bh: 1, w: 1, h: 1 };
+
   private stipplePattern: CanvasPattern | null = null;
   private trackPattern: CanvasPattern | null = null;
 
@@ -75,7 +94,7 @@ export class Renderer {
     const marginX = Math.max(14, w * (portrait ? 0.03 : 0.06));
     const marginTop = Math.min(170, Math.max(64, h * 0.17));
     const marginBottom = Math.max(70, h * 0.11);
-    this.cell = Math.max(
+    this.baseCell = Math.max(
       20,
       Math.min(
         84,
@@ -87,14 +106,107 @@ export class Renderer {
         ),
       ),
     );
-    this.origin = {
-      x: Math.round((w - bw * this.cell) / 2 - minX * this.cell),
+    this.baseOrigin = {
+      x: Math.round((w - bw * this.baseCell) / 2 - minX * this.baseCell),
       y: Math.round(
         marginTop +
-          (h - marginTop - marginBottom - bh * this.cell) / 2 -
-          minY * this.cell,
+          (h - marginTop - marginBottom - bh * this.baseCell) / 2 -
+          minY * this.baseCell,
       ),
     };
+
+    // Cache what clamping/zoom limits need, then project the current view.
+    this.view = { minX, minY, bw, bh, w, h };
+    // Allow zooming in until cells reach a comfortable finger size, but never
+    // out past the fit (fit already shows the whole puzzle).
+    this.minZoom = 1;
+    this.maxZoom = Math.max(2.5, 132 / this.baseCell);
+    this.zoom = Math.min(Math.max(this.zoom, this.minZoom), this.maxZoom);
+    this.applyView();
+  }
+
+  // --- view transform --------------------------------------------------------
+
+  /** Recompute effective cell/origin from base values + zoom + clamped pan. */
+  private applyView(): void {
+    this.cell = this.baseCell * this.zoom;
+    this.clampPan();
+    this.origin = {
+      x: this.baseOrigin.x * this.zoom + this.pan.x,
+      y: this.baseOrigin.y * this.zoom + this.pan.y,
+    };
+  }
+
+  /** Keep the puzzle content from drifting off-screen as the user pans. */
+  private clampPan(): void {
+    const { minX, minY, bw, bh, w, h } = this.view;
+    const clampAxis = (
+      base: number,
+      idx: number,
+      count: number,
+      viewSize: number,
+      p: number,
+    ): number => {
+      const content = count * this.baseCell * this.zoom;
+      const a = (base + idx * this.baseCell) * this.zoom; // content edge at pan 0
+      let lo: number, hi: number;
+      if (content <= viewSize) {
+        // Smaller than the viewport: keep it fully visible.
+        lo = -a;
+        hi = viewSize - content - a;
+      } else {
+        // Larger than the viewport: no empty gutters past the edges.
+        lo = viewSize - content - a;
+        hi = -a;
+      }
+      return Math.min(Math.max(p, lo), hi);
+    };
+    this.pan = {
+      x: clampAxis(this.baseOrigin.x, minX, bw, w, this.pan.x),
+      y: clampAxis(this.baseOrigin.y, minY, bh, h, this.pan.y),
+    };
+  }
+
+  /** Zoom by `factor` while keeping the screen point (sx, sy) fixed. */
+  zoomAround(sx: number, sy: number, factor: number): boolean {
+    const next = Math.min(
+      Math.max(this.zoom * factor, this.minZoom),
+      this.maxZoom,
+    );
+    if (next === this.zoom) return false;
+    // World point (zoom-1 screen coords) under the cursor stays put.
+    const ux = (sx - this.pan.x) / this.zoom;
+    const uy = (sy - this.pan.y) / this.zoom;
+    this.zoom = next;
+    this.pan = { x: sx - next * ux, y: sy - next * uy };
+    this.applyView();
+    return true;
+  }
+
+  /** Translate the view by a screen-space delta (CSS px). */
+  panBy(dx: number, dy: number): void {
+    this.pan = { x: this.pan.x + dx, y: this.pan.y + dy };
+    this.applyView();
+  }
+
+  /** Reset to the fit view (zoom 1, no pan). */
+  resetView(): void {
+    this.zoom = 1;
+    this.pan = { x: 0, y: 0 };
+    this.applyView();
+  }
+
+  /** True when the content is larger than the viewport on some axis. */
+  canPan(): boolean {
+    return this.zoom > this.minZoom + 1e-3;
+  }
+
+  canZoomIn(): boolean {
+    return this.zoom < this.maxZoom - 1e-3;
+  }
+
+  canZoomOut(): boolean {
+    return this.zoom > this.minZoom + 1e-3;
   }
 
   /** Grid cell under a canvas-space point, or null when outside the grid. */

@@ -70,6 +70,49 @@ body {
   letter-spacing: 0.05em;
 }
 
+/* --- zoom controls --- */
+#zoom-controls {
+  position: absolute;
+  right: calc(20px + env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 20;
+}
+
+.zoom-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-light);
+  background: rgba(253, 253, 253, 0.85);
+  color: var(--ink-light);
+  font-size: 22px;
+  font-family: var(--font);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-btn:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+
+.zoom-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+#zoom-reset {
+  font-size: 18px;
+}
+
 /* --- tutorial callout --- */
 #tutorial-box {
   position: absolute;
@@ -348,6 +391,12 @@ body {
   .circle-btn {
     width: 40px;
     height: 40px;
+  }
+
+  .zoom-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
   }
 
   #clue-popover {

@@ -1,6 +1,7 @@
 import { endCell, key, occupancy, tryPull } from "@spellwound/core";
 import type { End, GameState, Vec } from "@spellwound/core";
 import { Renderer } from "./renderer";
+// (pull gesture + pinch/pan view gestures)
 
 export interface PullInputOptions {
   getState(): GameState | null;
@@ -103,19 +104,60 @@ export function attachPullInput(
     }
   };
 
+  // --- multi-pointer view gestures (pinch-zoom / drag-pan) -------------------
+  // Live pointers on the canvas, so we can tell a one-finger pull/tap from a
+  // two-finger pinch and hand the leftover finger back to panning cleanly.
+  const pointers = new Map<number, { x: number; y: number }>();
+  /** One-finger pan/tap candidate (only pans once zoomed in). */
+  let pan:
+    | { pointerId: number; last: Vec; moved: boolean; tapCell: Vec | null }
+    | null = null;
+  /** Two-finger pinch state, tracking the previous gap and midpoint. */
+  let pinch: { lastDist: number; lastMid: Vec } | null = null;
+  const TAP_SLOP = 6; // px of movement before a touch stops being a tap
+
+  const twoPointerGeom = (): { dist: number; mid: Vec } | null => {
+    const pts = [...pointers.values()];
+    if (pts.length < 2) return null;
+    const [a, b] = pts;
+    return {
+      dist: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+      mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+    };
+  };
+
   const onDown = (e: PointerEvent): void => {
     if (opts.enabled && !opts.enabled()) return;
     const state = opts.getState();
     if (!state) return;
     const p = point(e);
+    pointers.set(e.pointerId, p);
+
+    // A second finger promotes any active gesture to a pinch.
+    if (pointers.size === 2) {
+      drag = null;
+      pan = null;
+      const g = twoPointerGeom();
+      if (g) pinch = { lastDist: g.dist, lastMid: g.mid };
+      opts.onChange();
+      return;
+    }
+    if (pointers.size > 2) return;
+
+    // Single finger: grab a head/tail, else stage a pan-or-tap.
     const g = grabEndAt(p);
     if (g) {
       drag = { ...g, pointerId: e.pointerId };
       canvas.setPointerCapture(e.pointerId);
       opts.onChange();
     } else {
-      const cell = renderer.cellAt(p.x, p.y, state);
-      if (cell) opts.onCellTap?.(cell);
+      canvas.setPointerCapture(e.pointerId);
+      pan = {
+        pointerId: e.pointerId,
+        last: p,
+        moved: false,
+        tapCell: renderer.cellAt(p.x, p.y, state),
+      };
     }
   };
 
@@ -124,6 +166,20 @@ export function attachPullInput(
     const state = opts.getState();
     if (!state) return;
     const p = point(e);
+    if (pointers.has(e.pointerId)) pointers.set(e.pointerId, p);
+
+    if (pinch) {
+      const g = twoPointerGeom();
+      if (g) {
+        renderer.zoomAround(g.mid.x, g.mid.y, g.dist / pinch.lastDist);
+        renderer.panBy(g.mid.x - pinch.lastMid.x, g.mid.y - pinch.lastMid.y);
+        pinch.lastDist = g.dist;
+        pinch.lastMid = g.mid;
+        opts.onChange();
+      }
+      return;
+    }
+
     if (drag && e.pointerId === drag.pointerId) {
       const cell = renderer.cellAt(p.x, p.y, state);
       if (cell) {
@@ -133,6 +189,19 @@ export function attachPullInput(
       }
       return;
     }
+
+    if (pan && e.pointerId === pan.pointerId) {
+      const dx = p.x - pan.last.x;
+      const dy = p.y - pan.last.y;
+      if (!pan.moved && Math.hypot(dx, dy) > TAP_SLOP) pan.moved = true;
+      if (pan.moved && renderer.canPan()) {
+        renderer.panBy(dx, dy);
+        opts.onChange();
+      }
+      pan.last = p;
+      return;
+    }
+
     const cell = renderer.cellAt(p.x, p.y, state);
     const grabbable = !state.solved && cell !== null && grabEndAt(p) !== null;
     canvas.style.cursor = grabbable
@@ -141,16 +210,51 @@ export function attachPullInput(
   };
 
   const onUp = (e: PointerEvent): void => {
+    pointers.delete(e.pointerId);
+
+    if (pinch) {
+      if (pointers.size < 2) {
+        pinch = null;
+        // Hand a leftover finger back to panning without a jump.
+        if (pointers.size === 1) {
+          const [id, pos] = [...pointers.entries()][0];
+          pan = { pointerId: id, last: pos, moved: true, tapCell: null };
+        }
+        opts.onChange();
+      }
+      return;
+    }
+
     if (drag && e.pointerId === drag.pointerId) {
       drag = null;
       opts.onChange();
+      return;
     }
+
+    if (pan && e.pointerId === pan.pointerId) {
+      const tapCell = pan.tapCell;
+      const wasTap = !pan.moved;
+      pan = null;
+      if (wasTap && tapCell) opts.onCellTap?.(tapCell);
+      else opts.onChange();
+    }
+  };
+
+  const onWheel = (e: WheelEvent): void => {
+    if (opts.enabled && !opts.enabled()) return;
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    // Ctrl+wheel is the trackpad pinch gesture; treat both as zoom.
+    const factor = Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015));
+    if (renderer.zoomAround(e.clientX - rect.left, e.clientY - rect.top, factor))
+      opts.onChange();
   };
 
   canvas.addEventListener("pointerdown", onDown);
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerup", onUp);
   canvas.addEventListener("pointercancel", onUp);
+  canvas.addEventListener("wheel", onWheel, { passive: false });
 
   return {
     detach() {
@@ -158,7 +262,11 @@ export function attachPullInput(
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointercancel", onUp);
+      canvas.removeEventListener("wheel", onWheel);
       drag = null;
+      pan = null;
+      pinch = null;
+      pointers.clear();
     },
     currentDrag: () =>
       drag ? { trainId: drag.trainId, end: drag.end } : null,

@@ -26,6 +26,9 @@ const nextBtn = $<HTMLButtonElement>("next-btn");
 const skipBtn = $<HTMLButtonElement>("skip-btn");
 const addBtn = $<HTMLButtonElement>("add-btn");
 const removeBtn = $<HTMLButtonElement>("remove-btn");
+const zoomInBtn = $<HTMLButtonElement>("zoom-in");
+const zoomOutBtn = $<HTMLButtonElement>("zoom-out");
+const zoomResetBtn = $<HTMLButtonElement>("zoom-reset");
 const menuOverlay = $("menu-overlay");
 const levelsOverlay = $("levels-overlay");
 const helpOverlay = $("help-overlay");
@@ -130,6 +133,10 @@ function render(): void {
   nextBtn.hidden = !state.solved;
   addBtn.disabled = state.visibleHints >= state.puzzle.hints.length;
   removeBtn.disabled = state.visibleHints <= 0;
+  zoomInBtn.disabled = !renderer.canZoomIn();
+  zoomOutBtn.disabled = !renderer.canZoomOut();
+  zoomResetBtn.hidden = renderer.zoom <= 1.001;
+  if (clueSelection) positionClue();
   if (state.solved && !recorded) onSolved();
 }
 
@@ -154,6 +161,7 @@ function startPuzzle(puzzle: Puzzle): void {
   skipBtn.hidden = mode === "shared";
   tutorialBox.hidden = !puzzle.tutorialText;
   tutorialBox.textContent = puzzle.tutorialText ?? "";
+  renderer.resetView();
   renderer.layout(state);
   render();
   setScreen("game");
@@ -218,7 +226,13 @@ function showClueAt(cell: Vec): void {
   dir.textContent = `${clue.direction} · ${clue.answer.length} letters`;
   cluePopover.append(dir, document.createTextNode(clue.text));
   cluePopover.hidden = false;
-  const c = renderer.cellCenter(cell);
+  positionClue();
+}
+
+/** Anchor the clue popover near its cell (recomputed on zoom/pan/resize). */
+function positionClue(): void {
+  if (!clueSelection) return;
+  const c = renderer.cellCenter(clueSelection.cell);
   const rect = canvas.getBoundingClientRect();
   const left = Math.max(
     8,
@@ -263,6 +277,20 @@ addBtn.addEventListener("click", () => {
 removeBtn.addEventListener("click", () => {
   if (!state) return;
   state = removeHint(state);
+  render();
+});
+
+/** Step-zoom about the canvas center from the on-screen buttons. */
+function zoomStep(factor: number): void {
+  if (!state) return;
+  const rect = canvas.getBoundingClientRect();
+  renderer.zoomAround(rect.width / 2, rect.height / 2, factor);
+  render();
+}
+zoomInBtn.addEventListener("click", () => zoomStep(1.5));
+zoomOutBtn.addEventListener("click", () => zoomStep(1 / 1.5));
+zoomResetBtn.addEventListener("click", () => {
+  renderer.resetView();
   render();
 });
 $("reset-btn").addEventListener("click", () => {
