@@ -5,6 +5,7 @@ import tutorial02 from "../../../levels/tutorial-02.json";
 import tutorial03 from "../../../levels/tutorial-03.json";
 import level04 from "../../../levels/level-04.json";
 import level05 from "../../../levels/level-05.json";
+import level06 from "../../../levels/level-06.json";
 
 const raw = [
   tutorial01,
@@ -12,6 +13,7 @@ const raw = [
   tutorial03,
   level04,
   level05,
+  level06,
 ] as unknown as Puzzle[];
 
 /** Bundled official levels (tutorials first), schema-validated at load time. */

@@ -1,4 +1,5 @@
 import {
+  FIXED_COLOR,
   isEndDocked,
   key,
   occupancy,
@@ -125,6 +126,7 @@ export class Renderer {
     this.drawTrackCells(state);
     this.drawPlayCells(state);
     this.drawHints(state);
+    this.drawFixedBlocks(state);
     this.drawTrains(state, drag);
   }
 
@@ -260,6 +262,26 @@ export class Renderer {
       }
       ctx.closePath();
       ctx.fill();
+    }
+  }
+
+  /**
+   * Immovable pre-filled blocks: solid gray squares carrying their play
+   * cell's solution letter. They never move and have no head/tail notch.
+   */
+  private drawFixedBlocks(state: GameState): void {
+    const { ctx, cell } = this;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const fb of state.puzzle.fixedBlocks ?? []) {
+      const pc = playCellAt(state.puzzle, fb);
+      const x = this.origin.x + fb.x * cell;
+      const y = this.origin.y + fb.y * cell;
+      ctx.fillStyle = FIXED_COLOR;
+      ctx.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `700 ${Math.round(cell * 0.52)}px "Segoe UI", "Helvetica Neue", system-ui, sans-serif`;
+      ctx.fillText(pc?.letter ?? "", x + cell / 2, y + cell / 2 + cell * 0.03);
     }
   }
 

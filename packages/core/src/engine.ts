@@ -9,6 +9,11 @@ import type {
 
 export const key = (v: Vec): string => `${v.x},${v.y}`;
 
+/** Synthetic train id used for immovable pre-filled blocks in occupancy maps. */
+export const FIXED_TRAIN_ID = "__fixed__";
+/** Fill color for immovable pre-filled blocks. */
+export const FIXED_COLOR = "#4b5157";
+
 export function createState(puzzle: Puzzle): GameState {
   return {
     puzzle,
@@ -39,7 +44,22 @@ export function occupancy(state: GameState): Map<string, Occupant> {
         color: def.color,
         isHead: i === 0,
         isTail: i === ts.cells.length - 1,
+        isFixed: false,
       });
+    });
+  }
+  // Immovable pre-filled blocks: permanent occupants carrying their play
+  // cell's solution letter. They block movement and satisfy that cell.
+  for (const fb of state.puzzle.fixedBlocks ?? []) {
+    const pc = state.puzzle.playCells.find((p) => p.x === fb.x && p.y === fb.y);
+    map.set(key(fb), {
+      trainId: FIXED_TRAIN_ID,
+      index: -1,
+      letter: pc?.letter ?? "",
+      color: FIXED_COLOR,
+      isHead: false,
+      isTail: false,
+      isFixed: true,
     });
   }
   return map;

@@ -29,7 +29,7 @@ const playBtn = $<HTMLButtonElement>("play-btn");
 const PALETTE = ["#8fc31f", "#29abe2", "#b09272", "#e58bb1", "#f5a623", "#7d6fd9"];
 const DRAFT_KEY = "spellwound.editor";
 
-type Tool = "slot" | "train" | "track" | "erase";
+type Tool = "slot" | "train" | "track" | "fixed" | "erase";
 
 // ---------------------------------------------------------------------------
 // Draft state
@@ -43,6 +43,7 @@ function blankDraft(): Puzzle {
     gridWidth: 15,
     gridHeight: 9,
     trackCells: [],
+    fixedBlocks: [],
     playCells: [],
     trains: [],
     hints: [],
@@ -83,6 +84,7 @@ const adjacent = (a: Vec, b: Vec): boolean =>
 
 const slotAt = (c: Vec) => draft.playCells.find((p) => p.x === c.x && p.y === c.y);
 const corridorAt = (c: Vec) => (draft.trackCells ?? []).some((t) => same(t, c));
+const fixedAt = (c: Vec) => (draft.fixedBlocks ?? []).some((f) => same(f, c));
 const trainBlockAt = (c: Vec) =>
   draft.trains.find((t) => t.start.some((s) => same(s, c)));
 
@@ -94,6 +96,8 @@ function sync(): void {
   draft.hints = draft.hints.filter(
     (h) => draft.trains.some((t) => t.id === h.trainId) && slotAt(h.cell),
   );
+  // Fixed blocks only make sense on a play cell; drop any left stranded.
+  draft.fixedBlocks = (draft.fixedBlocks ?? []).filter((fb) => slotAt(fb));
   draft.defaultVisibleHints = Math.min(draft.defaultVisibleHints, draft.hints.length);
   // Rebuild clues from the grid, preserving typed texts by direction+start.
   const texts = new Map(
@@ -133,6 +137,19 @@ function toggleCorridor(c: Vec, add: boolean): boolean {
   return false;
 }
 
+function toggleFixed(c: Vec, add: boolean): boolean {
+  const has = fixedAt(c);
+  if (add && !has && slotAt(c)) {
+    (draft.fixedBlocks ??= []).push({ ...c });
+    return true;
+  }
+  if (!add && has) {
+    draft.fixedBlocks = (draft.fixedBlocks ?? []).filter((f) => !same(f, c));
+    return true;
+  }
+  return false;
+}
+
 function removeTrain(id: string): void {
   draft.trains = draft.trains.filter((t) => t.id !== id);
   draft.hints = draft.hints.filter((h) => h.trainId !== id);
@@ -163,6 +180,10 @@ function eraseAt(c: Vec): void {
   const hadHints = draft.hints.some((h) => same(h.cell, c));
   if (hadHints) {
     draft.hints = draft.hints.filter((h) => !same(h.cell, c));
+    return;
+  }
+  if (fixedAt(c)) {
+    toggleFixed(c, false);
     return;
   }
   const train = trainBlockAt(c);
@@ -240,7 +261,8 @@ const TOOL_HINTS: Record<Tool, string> = {
   slot: "Click or drag on the grid to paint crossword slots. Click a slot and type its letter; arrow keys move, backspace clears.",
   train: "Drag a path to lay a train, head first. Letters auto-fill from slots beneath (edit them in the list below).",
   track: "Paint extra corridor cells that trains may travel through. Slots and train starts are track automatically.",
-  erase: "Click a cell to erase: hint marks first, then trains, then slots, then corridors.",
+  fixed: "Click a crossword slot to lock it as an immovable gray block: pre-filled with its letter, blocks trains, counts as solved. Click again to unlock.",
+  erase: "Click a cell to erase: hint marks first, then fixed blocks, then trains, then slots, then corridors.",
 };
 
 function rebuildPanel(): void {
@@ -404,6 +426,13 @@ canvas.addEventListener("pointerdown", (e) => {
       if (toggleCorridor(cell, paintAdd)) sync();
       painting = true;
       break;
+    case "fixed":
+      if (slotAt(cell)) {
+        paintAdd = !fixedAt(cell);
+        if (toggleFixed(cell, paintAdd)) sync();
+        painting = true;
+      }
+      break;
     case "train":
       if (!trainBlockAt(cell)) {
         trainPath = [cell];
@@ -429,6 +458,8 @@ canvas.addEventListener("pointermove", (e) => {
     sync();
   } else if (tool === "track" && painting) {
     if (toggleCorridor(cell, paintAdd)) sync();
+  } else if (tool === "fixed" && painting && slotAt(cell)) {
+    if (toggleFixed(cell, paintAdd)) sync();
   } else if (tool === "train" && trainPath.length > 0) {
     const last = trainPath[trainPath.length - 1];
     if (

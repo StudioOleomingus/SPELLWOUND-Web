@@ -37,6 +37,18 @@ export function validatePuzzle(p: Puzzle): string[] {
     if (!inBounds(c)) err(`trackCell ${key(c)} out of bounds`);
   }
 
+  // Fixed (immovable pre-filled) blocks: in bounds, unique, sit on a play
+  // cell (so they carry a solution letter), and not on a blocked cell.
+  const fixedSet = new Set<string>();
+  for (const fb of p.fixedBlocks ?? []) {
+    const k = key(fb);
+    if (!inBounds(fb)) err(`fixedBlock ${k} out of bounds`);
+    if (blockedSet.has(k)) err(`fixedBlock ${k} is also a blocked cell`);
+    if (fixedSet.has(k)) err(`duplicate fixedBlock at ${k}`);
+    if (!playByKey.has(k)) err(`fixedBlock ${k} is not on a play cell`);
+    fixedSet.add(k);
+  }
+
   // Trains: shape, bounds, connectivity, no overlaps.
   const occupied = new Set<string>();
   const trainIds = new Set<string>();
@@ -52,6 +64,7 @@ export function validatePuzzle(p: Puzzle): string[] {
       const k = key(c);
       if (!inBounds(c)) err(`train "${t.id}" start cell ${k} out of bounds`);
       if (blockedSet.has(k)) err(`train "${t.id}" start cell ${k} is blocked`);
+      if (fixedSet.has(k)) err(`train "${t.id}" start cell ${k} sits on an immovable block`);
       if (occupied.has(k)) err(`train "${t.id}" start cell ${k} overlaps another block`);
       occupied.add(k);
       if (i > 0 && !adjacent(c, t.start[i - 1]))
@@ -68,6 +81,7 @@ export function validatePuzzle(p: Puzzle): string[] {
       continue;
     }
     if (h.end !== "head" && h.end !== "tail") err(`hint at ${k} has invalid end "${h.end}"`);
+    if (fixedSet.has(k)) err(`hint at ${k} sits on an immovable block a train end can never reach`);
     const slot = playByKey.get(k);
     if (slot === undefined) err(`hint at ${k} is not on a play cell`);
     else {
@@ -101,10 +115,12 @@ export function validatePuzzle(p: Puzzle): string[] {
     });
   }
 
-  // Solvability sanity: total train letters must cover all play cells exactly.
+  // Solvability sanity: fixed blocks pre-fill their own play cells, so the
+  // trains must cover exactly the remaining (movable) play cells.
   const totalBlocks = p.trains.reduce((n, t) => n + t.letters.length, 0);
-  if (totalBlocks !== p.playCells.length)
-    err(`train blocks (${totalBlocks}) != play cells (${p.playCells.length}); puzzle cannot be exactly filled`);
+  const movableCells = p.playCells.length - fixedSet.size;
+  if (totalBlocks !== movableCells)
+    err(`train blocks (${totalBlocks}) != movable play cells (${movableCells} = ${p.playCells.length} slots - ${fixedSet.size} fixed); puzzle cannot be exactly filled`);
 
   return errors;
 }

@@ -56,6 +56,12 @@ export interface Puzzle {
   /** Cells trains may never enter. Optional; most puzzles have none. */
   blocked?: Vec[];
   /**
+   * Immovable pre-filled letter blocks. Each sits on a crossword play cell and
+   * permanently shows that cell's solution letter: it blocks train movement,
+   * counts as an already-solved cell, and never moves. Rendered in gray.
+   */
+  fixedBlocks?: Vec[];
+  /**
    * Extra navigable cells beyond the automatic track (play cells + every
    * train's starting footprint). Trains may only ever occupy track cells;
    * the rest of the grid is scenery. Use these for connector corridors.
@@ -96,4 +102,6 @@ export interface Occupant {
   color: string;
   isHead: boolean;
   isTail: boolean;
+  /** True for an immovable pre-filled block (not part of any train). */
+  isFixed?: boolean;
 }

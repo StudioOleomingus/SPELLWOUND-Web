@@ -1,13 +1,37 @@
 import { describe, expect, it } from "vitest";
-import { createState, solve, tryPull, validatePuzzle } from "../src";
+import { createState, occupancy, solve, tryPull, validatePuzzle } from "../src";
 import type { End, GameState, Puzzle, Vec } from "../src";
 import tutorial01 from "../../../levels/tutorial-01.json";
 import tutorial02 from "../../../levels/tutorial-02.json";
 import tutorial03 from "../../../levels/tutorial-03.json";
 import level04 from "../../../levels/level-04.json";
 import level05 from "../../../levels/level-05.json";
+import level06 from "../../../levels/level-06.json";
 
 const levels = [tutorial01, tutorial02, tutorial03, level04, level05] as unknown as Puzzle[];
+
+/**
+ * level-06 ("Courses") is the large puzzle that showcases immovable fixed
+ * blocks (the two gray cells E and S). Its solution is ~39 pulls — far past
+ * the BFS solver's practical budget — so it is verified here by an explicit
+ * scripted walkthrough rather than the exhaustive solver.
+ */
+const level06Walkthrough: [string, End, number, number][] = [
+  ["red", "head", 10, 16], ["red", "head", 10, 15], ["red", "head", 10, 14],
+  ["red", "head", 9, 14], ["red", "head", 9, 13], ["red", "head", 10, 13],
+  ["red", "head", 10, 12], ["red", "head", 9, 12], ["red", "head", 9, 11],
+  ["red", "head", 9, 10], ["red", "head", 9, 9], ["red", "head", 10, 9],
+  ["green", "head", 14, 17], ["green", "head", 13, 17], ["green", "head", 13, 16],
+  ["green", "head", 13, 15], ["green", "head", 12, 15], ["green", "head", 11, 15],
+  ["green", "head", 11, 14], ["green", "head", 11, 13],
+  ["orange", "head", 14, 15], ["orange", "head", 14, 14], ["orange", "head", 13, 14],
+  ["orange", "head", 12, 14], ["orange", "head", 12, 13], ["orange", "head", 12, 12],
+  ["cyan", "tail", 14, 10], ["cyan", "tail", 13, 10], ["cyan", "tail", 12, 10],
+  ["cyan", "tail", 12, 9], ["cyan", "tail", 11, 9], ["cyan", "tail", 11, 10],
+  ["cyan", "tail", 11, 11],
+  ["purple", "head", 14, 13], ["purple", "head", 14, 12], ["purple", "head", 14, 11],
+  ["purple", "head", 15, 11], ["purple", "head", 15, 10], ["purple", "head", 15, 9],
+];
 
 interface Step {
   trainId: string;
@@ -193,5 +217,29 @@ describe("bundled levels", () => {
     s = tryPull(s, "blue", "tail", { x: 6, y: 3 })!;
     // Green can no longer enter the column upward.
     expect(tryPull(s, "green", "head", { x: 6, y: 4 })).toBeNull();
+  });
+
+  it("level-06 (fixed blocks) passes schema validation", () => {
+    expect(validatePuzzle(level06 as unknown as Puzzle)).toEqual([]);
+  });
+
+  it("level-06 solves via its scripted walkthrough, honoring the fixed E and S", () => {
+    const p = level06 as unknown as Puzzle;
+    let s: GameState = createState(p);
+    for (const [id, end, x, y] of level06Walkthrough) {
+      const next = tryPull(s, id, end, { x, y });
+      expect(next, `level-06: pull ${id} ${end} -> ${x},${y}`).not.toBeNull();
+      s = next!;
+    }
+    expect(s.solved).toBe(true);
+  });
+
+  it("level-06: the two fixed cells are pre-filled and immovable", () => {
+    const p = level06 as unknown as Puzzle;
+    const occ = occupancy(createState(p));
+    expect(occ.get("11,12")?.isFixed).toBe(true);
+    expect(occ.get("11,12")?.letter).toBe("E");
+    expect(occ.get("9,15")?.isFixed).toBe(true);
+    expect(occ.get("9,15")?.letter).toBe("S");
   });
 });

@@ -1,0 +1,943 @@
+{
+  "id": "level-06",
+  "title": "Courses",
+  "author": "Oleomingus",
+  "levelNumber": 6,
+  "gridWidth": 34,
+  "gridHeight": 30,
+  "fixedBlocks": [
+    {
+      "x": 11,
+      "y": 12
+    },
+    {
+      "x": 9,
+      "y": 15
+    }
+  ],
+  "playCells": [
+    {
+      "x": 9,
+      "y": 9,
+      "letter": "C"
+    },
+    {
+      "x": 10,
+      "y": 9,
+      "letter": "R"
+    },
+    {
+      "x": 11,
+      "y": 9,
+      "letter": "A"
+    },
+    {
+      "x": 12,
+      "y": 9,
+      "letter": "M"
+    },
+    {
+      "x": 15,
+      "y": 9,
+      "letter": "O"
+    },
+    {
+      "x": 9,
+      "y": 10,
+      "letter": "O"
+    },
+    {
+      "x": 11,
+      "y": 10,
+      "letter": "L"
+    },
+    {
+      "x": 12,
+      "y": 10,
+      "letter": "Y"
+    },
+    {
+      "x": 13,
+      "y": 10,
+      "letter": "M"
+    },
+    {
+      "x": 14,
+      "y": 10,
+      "letter": "P"
+    },
+    {
+      "x": 15,
+      "y": 10,
+      "letter": "H"
+    },
+    {
+      "x": 9,
+      "y": 11,
+      "letter": "U"
+    },
+    {
+      "x": 11,
+      "y": 11,
+      "letter": "L"
+    },
+    {
+      "x": 14,
+      "y": 11,
+      "letter": "A"
+    },
+    {
+      "x": 15,
+      "y": 11,
+      "letter": "M"
+    },
+    {
+      "x": 9,
+      "y": 12,
+      "letter": "R"
+    },
+    {
+      "x": 10,
+      "y": 12,
+      "letter": "E"
+    },
+    {
+      "x": 11,
+      "y": 12,
+      "letter": "E"
+    },
+    {
+      "x": 12,
+      "y": 12,
+      "letter": "F"
+    },
+    {
+      "x": 14,
+      "y": 12,
+      "letter": "R"
+    },
+    {
+      "x": 9,
+      "y": 13,
+      "letter": "S"
+    },
+    {
+      "x": 10,
+      "y": 13,
+      "letter": "A"
+    },
+    {
+      "x": 11,
+      "y": 13,
+      "letter": "G"
+    },
+    {
+      "x": 12,
+      "y": 13,
+      "letter": "E"
+    },
+    {
+      "x": 14,
+      "y": 13,
+      "letter": "O"
+    },
+    {
+      "x": 9,
+      "y": 14,
+      "letter": "E"
+    },
+    {
+      "x": 10,
+      "y": 14,
+      "letter": "R"
+    },
+    {
+      "x": 11,
+      "y": 14,
+      "letter": "R"
+    },
+    {
+      "x": 12,
+      "y": 14,
+      "letter": "A"
+    },
+    {
+      "x": 13,
+      "y": 14,
+      "letter": "N"
+    },
+    {
+      "x": 14,
+      "y": 14,
+      "letter": "D"
+    },
+    {
+      "x": 9,
+      "y": 15,
+      "letter": "S"
+    },
+    {
+      "x": 10,
+      "y": 15,
+      "letter": "T"
+    },
+    {
+      "x": 11,
+      "y": 15,
+      "letter": "O"
+    },
+    {
+      "x": 12,
+      "y": 15,
+      "letter": "R"
+    },
+    {
+      "x": 13,
+      "y": 15,
+      "letter": "E"
+    },
+    {
+      "x": 14,
+      "y": 15,
+      "letter": "Y"
+    },
+    {
+      "x": 10,
+      "y": 16,
+      "letter": "H"
+    },
+    {
+      "x": 13,
+      "y": 16,
+      "letter": "X"
+    },
+    {
+      "x": 13,
+      "y": 17,
+      "letter": "T"
+    },
+    {
+      "x": 14,
+      "y": 17,
+      "letter": "O"
+    }
+  ],
+  "trains": [
+    {
+      "id": "red",
+      "color": "#e8402f",
+      "letters": [
+        "R",
+        "C",
+        "O",
+        "U",
+        "R",
+        "E",
+        "A",
+        "S",
+        "E",
+        "R",
+        "T",
+        "H"
+      ],
+      "start": [
+        {
+          "x": 10,
+          "y": 17
+        },
+        {
+          "x": 10,
+          "y": 18
+        },
+        {
+          "x": 10,
+          "y": 19
+        },
+        {
+          "x": 10,
+          "y": 20
+        },
+        {
+          "x": 10,
+          "y": 21
+        },
+        {
+          "x": 10,
+          "y": 22
+        },
+        {
+          "x": 10,
+          "y": 23
+        },
+        {
+          "x": 10,
+          "y": 24
+        },
+        {
+          "x": 10,
+          "y": 25
+        },
+        {
+          "x": 10,
+          "y": 26
+        },
+        {
+          "x": 10,
+          "y": 27
+        },
+        {
+          "x": 10,
+          "y": 28
+        }
+      ]
+    },
+    {
+      "id": "green",
+      "color": "#8fc31f",
+      "letters": [
+        "G",
+        "R",
+        "O",
+        "R",
+        "E",
+        "X",
+        "T",
+        "O"
+      ],
+      "start": [
+        {
+          "x": 14,
+          "y": 18
+        },
+        {
+          "x": 14,
+          "y": 19
+        },
+        {
+          "x": 14,
+          "y": 20
+        },
+        {
+          "x": 14,
+          "y": 21
+        },
+        {
+          "x": 14,
+          "y": 22
+        },
+        {
+          "x": 14,
+          "y": 23
+        },
+        {
+          "x": 14,
+          "y": 24
+        },
+        {
+          "x": 14,
+          "y": 25
+        }
+      ]
+    },
+    {
+      "id": "orange",
+      "color": "#f5a623",
+      "letters": [
+        "F",
+        "E",
+        "A",
+        "N",
+        "D",
+        "Y"
+      ],
+      "start": [
+        {
+          "x": 15,
+          "y": 15
+        },
+        {
+          "x": 16,
+          "y": 15
+        },
+        {
+          "x": 17,
+          "y": 15
+        },
+        {
+          "x": 18,
+          "y": 15
+        },
+        {
+          "x": 19,
+          "y": 15
+        },
+        {
+          "x": 20,
+          "y": 15
+        }
+      ]
+    },
+    {
+      "id": "cyan",
+      "color": "#29abe2",
+      "letters": [
+        "P",
+        "M",
+        "Y",
+        "M",
+        "A",
+        "L",
+        "L"
+      ],
+      "start": [
+        {
+          "x": 14,
+          "y": 3
+        },
+        {
+          "x": 14,
+          "y": 4
+        },
+        {
+          "x": 14,
+          "y": 5
+        },
+        {
+          "x": 14,
+          "y": 6
+        },
+        {
+          "x": 14,
+          "y": 7
+        },
+        {
+          "x": 14,
+          "y": 8
+        },
+        {
+          "x": 14,
+          "y": 9
+        }
+      ]
+    },
+    {
+      "id": "purple",
+      "color": "#7d6fd9",
+      "letters": [
+        "O",
+        "H",
+        "M",
+        "A",
+        "R",
+        "O"
+      ],
+      "start": [
+        {
+          "x": 15,
+          "y": 13
+        },
+        {
+          "x": 16,
+          "y": 13
+        },
+        {
+          "x": 17,
+          "y": 13
+        },
+        {
+          "x": 18,
+          "y": 13
+        },
+        {
+          "x": 19,
+          "y": 13
+        },
+        {
+          "x": 20,
+          "y": 13
+        }
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "cell": {
+        "x": 10,
+        "y": 9
+      },
+      "trainId": "red",
+      "end": "head"
+    },
+    {
+      "cell": {
+        "x": 10,
+        "y": 16
+      },
+      "trainId": "red",
+      "end": "tail"
+    },
+    {
+      "cell": {
+        "x": 11,
+        "y": 13
+      },
+      "trainId": "green",
+      "end": "head"
+    },
+    {
+      "cell": {
+        "x": 14,
+        "y": 17
+      },
+      "trainId": "green",
+      "end": "tail"
+    },
+    {
+      "cell": {
+        "x": 12,
+        "y": 12
+      },
+      "trainId": "orange",
+      "end": "head"
+    },
+    {
+      "cell": {
+        "x": 14,
+        "y": 15
+      },
+      "trainId": "orange",
+      "end": "tail"
+    },
+    {
+      "cell": {
+        "x": 14,
+        "y": 10
+      },
+      "trainId": "cyan",
+      "end": "head"
+    },
+    {
+      "cell": {
+        "x": 11,
+        "y": 11
+      },
+      "trainId": "cyan",
+      "end": "tail"
+    },
+    {
+      "cell": {
+        "x": 15,
+        "y": 9
+      },
+      "trainId": "purple",
+      "end": "head"
+    },
+    {
+      "cell": {
+        "x": 14,
+        "y": 13
+      },
+      "trainId": "purple",
+      "end": "tail"
+    }
+  ],
+  "defaultVisibleHints": 4,
+  "clues": [
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 9,
+          "y": 9
+        },
+        {
+          "x": 10,
+          "y": 9
+        },
+        {
+          "x": 11,
+          "y": 9
+        },
+        {
+          "x": 12,
+          "y": 9
+        }
+      ],
+      "answer": "CRAM",
+      "text": "Study frantically before an exam"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 11,
+          "y": 10
+        },
+        {
+          "x": 12,
+          "y": 10
+        },
+        {
+          "x": 13,
+          "y": 10
+        },
+        {
+          "x": 14,
+          "y": 10
+        },
+        {
+          "x": 15,
+          "y": 10
+        }
+      ],
+      "answer": "LYMPH",
+      "text": "Clear fluid in the body's drainage system"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 14,
+          "y": 11
+        },
+        {
+          "x": 15,
+          "y": 11
+        }
+      ],
+      "answer": "AM",
+      "text": "Before noon, in brief"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 9,
+          "y": 12
+        },
+        {
+          "x": 10,
+          "y": 12
+        },
+        {
+          "x": 11,
+          "y": 12
+        },
+        {
+          "x": 12,
+          "y": 12
+        }
+      ],
+      "answer": "REEF",
+      "text": "Coral ridge near the surface"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 9,
+          "y": 13
+        },
+        {
+          "x": 10,
+          "y": 13
+        },
+        {
+          "x": 11,
+          "y": 13
+        },
+        {
+          "x": 12,
+          "y": 13
+        }
+      ],
+      "answer": "SAGE",
+      "text": "Wise elder, or a savory herb"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 9,
+          "y": 14
+        },
+        {
+          "x": 10,
+          "y": 14
+        },
+        {
+          "x": 11,
+          "y": 14
+        },
+        {
+          "x": 12,
+          "y": 14
+        },
+        {
+          "x": 13,
+          "y": 14
+        },
+        {
+          "x": 14,
+          "y": 14
+        }
+      ],
+      "answer": "ERRAND",
+      "text": "A short trip to run a task"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 9,
+          "y": 15
+        },
+        {
+          "x": 10,
+          "y": 15
+        },
+        {
+          "x": 11,
+          "y": 15
+        },
+        {
+          "x": 12,
+          "y": 15
+        },
+        {
+          "x": 13,
+          "y": 15
+        },
+        {
+          "x": 14,
+          "y": 15
+        }
+      ],
+      "answer": "STOREY",
+      "text": "A single floor of a building (British spelling)"
+    },
+    {
+      "direction": "across",
+      "cells": [
+        {
+          "x": 13,
+          "y": 17
+        },
+        {
+          "x": 14,
+          "y": 17
+        }
+      ],
+      "answer": "TO",
+      "text": "Toward, as a direction"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 9,
+          "y": 9
+        },
+        {
+          "x": 9,
+          "y": 10
+        },
+        {
+          "x": 9,
+          "y": 11
+        },
+        {
+          "x": 9,
+          "y": 12
+        },
+        {
+          "x": 9,
+          "y": 13
+        },
+        {
+          "x": 9,
+          "y": 14
+        },
+        {
+          "x": 9,
+          "y": 15
+        }
+      ],
+      "answer": "COURSES",
+      "text": "Classes you enrol in, or a meal's parts"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 11,
+          "y": 9
+        },
+        {
+          "x": 11,
+          "y": 10
+        },
+        {
+          "x": 11,
+          "y": 11
+        },
+        {
+          "x": 11,
+          "y": 12
+        },
+        {
+          "x": 11,
+          "y": 13
+        },
+        {
+          "x": 11,
+          "y": 14
+        },
+        {
+          "x": 11,
+          "y": 15
+        }
+      ],
+      "answer": "ALLEGRO",
+      "text": "Musical direction: brisk and lively"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 12,
+          "y": 9
+        },
+        {
+          "x": 12,
+          "y": 10
+        }
+      ],
+      "answer": "MY",
+      "text": "Belonging to me"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 15,
+          "y": 9
+        },
+        {
+          "x": 15,
+          "y": 10
+        },
+        {
+          "x": 15,
+          "y": 11
+        }
+      ],
+      "answer": "OHM",
+      "text": "Unit of electrical resistance"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 14,
+          "y": 10
+        },
+        {
+          "x": 14,
+          "y": 11
+        },
+        {
+          "x": 14,
+          "y": 12
+        },
+        {
+          "x": 14,
+          "y": 13
+        },
+        {
+          "x": 14,
+          "y": 14
+        },
+        {
+          "x": 14,
+          "y": 15
+        }
+      ],
+      "answer": "PARODY",
+      "text": "A comic imitation"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 10,
+          "y": 12
+        },
+        {
+          "x": 10,
+          "y": 13
+        },
+        {
+          "x": 10,
+          "y": 14
+        },
+        {
+          "x": 10,
+          "y": 15
+        },
+        {
+          "x": 10,
+          "y": 16
+        }
+      ],
+      "answer": "EARTH",
+      "text": "Our planet, or the ground"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 12,
+          "y": 12
+        },
+        {
+          "x": 12,
+          "y": 13
+        },
+        {
+          "x": 12,
+          "y": 14
+        },
+        {
+          "x": 12,
+          "y": 15
+        }
+      ],
+      "answer": "FEAR",
+      "text": "Dread or fright"
+    },
+    {
+      "direction": "down",
+      "cells": [
+        {
+          "x": 13,
+          "y": 14
+        },
+        {
+          "x": 13,
+          "y": 15
+        },
+        {
+          "x": 13,
+          "y": 16
+        },
+        {
+          "x": 13,
+          "y": 17
+        }
+      ],
+      "answer": "NEXT",
+      "text": "Immediately following"
+    }
+  ]
+}
