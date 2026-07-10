@@ -21,6 +21,18 @@ interface DragRef {
   end: End;
   pointerId: number;
   moved: boolean;
+  /** Coarse pointer (finger) — enables the lift offset and haptics. */
+  isTouch: boolean;
+  /** Screen point where the grab began (for the movement slop gate). */
+  sx: number;
+  sy: number;
+  /**
+   * Screen-space offset added to the pointer before resolving the target
+   * cell, so a touch drag keeps the grabbed tile a little ABOVE the fingertip
+   * instead of hidden beneath it. Zero for mouse.
+   */
+  ax: number;
+  ay: number;
 }
 
 /**
@@ -36,6 +48,8 @@ export function attachPullInput(
   opts: PullInputOptions,
 ): { detach(): void; currentDrag(): { trainId: string; end: End } | null } {
   let drag: DragRef | null = null;
+  /** Whether the most recent pointer was a finger (updated on down/move). */
+  let coarse = false;
 
   const point = (e: PointerEvent): { x: number; y: number } => {
     const rect = canvas.getBoundingClientRect();
@@ -55,10 +69,22 @@ export function attachPullInput(
           end: occ.isHead ? "head" : "tail",
           pointerId: -1,
           moved: false,
+          isTouch: coarse,
+          sx: p.x,
+          sy: p.y,
+          ax: 0,
+          ay: 0,
         };
       }
     }
-    let bestDist = renderer.cell * 0.85;
+    // Grab tolerance is a FIXED finger-size in screen pixels, not a fraction
+    // of the (zoom-scaled) cell. Otherwise, when zoomed in, the radius grows
+    // huge and swallows one-finger drags meant to pan the board. Touch gets a
+    // slightly larger reach than a mouse cursor.
+    let bestDist = Math.min(
+      renderer.cell * (coarse ? 1.0 : 0.85),
+      coarse ? 48 : 34,
+    );
     let found: DragRef | null = null;
     for (const ts of state.trains) {
       const ends: End[] = ts.cells.length === 1 ? ["head"] : ["head", "tail"];
@@ -67,7 +93,17 @@ export function attachPullInput(
         const d = Math.hypot(c.x - p.x, c.y - p.y);
         if (d < bestDist) {
           bestDist = d;
-          found = { trainId: ts.id, end, pointerId: -1, moved: false };
+          found = {
+            trainId: ts.id,
+            end,
+            pointerId: -1,
+            moved: false,
+            isTouch: coarse,
+            sx: p.x,
+            sy: p.y,
+            ax: 0,
+            ay: 0,
+          };
         }
       }
     }
@@ -77,6 +113,7 @@ export function attachPullInput(
   /** Greedily step the grabbed end toward the pointer cell (axis-major). */
   const stepToward = (target: Vec): void => {
     if (!drag) return;
+    let advancedAny = false;
     for (let guard = 0; guard < 12; guard++) {
       const state = opts.getState();
       if (!state) return;
@@ -97,10 +134,21 @@ export function attachPullInput(
           opts.setState(next);
           drag.moved = true;
           advanced = true;
+          advancedAny = true;
           break;
         }
       }
       if (!advanced) break; // visually resist illegal moves
+    }
+    // A short haptic tick per cell stepped, so the discrete snap is felt on
+    // phones without looking. No-op on desktop / unsupported browsers.
+    if (
+      advancedAny &&
+      drag.isTouch &&
+      typeof navigator !== "undefined" &&
+      typeof navigator.vibrate === "function"
+    ) {
+      navigator.vibrate(6);
     }
   };
 
@@ -130,6 +178,7 @@ export function attachPullInput(
     if (opts.enabled && !opts.enabled()) return;
     const state = opts.getState();
     if (!state) return;
+    coarse = e.pointerType === "touch";
     const p = point(e);
     pointers.set(e.pointerId, p);
 
@@ -137,6 +186,7 @@ export function attachPullInput(
     if (pointers.size === 2) {
       drag = null;
       pan = null;
+      renderer.loupe = null;
       const g = twoPointerGeom();
       if (g) pinch = { lastDist: g.dist, lastMid: g.mid };
       opts.onChange();
@@ -148,6 +198,15 @@ export function attachPullInput(
     const g = grabEndAt(p);
     if (g) {
       drag = { ...g, pointerId: e.pointerId };
+      // Touch: anchor the tile a little above the fingertip. The anchor is set
+      // so there is NO jump at grab (the target cell is still the grabbed one)
+      // — the half-cell lift only reveals the letter as the drag proceeds.
+      if (drag.isTouch) {
+        const train = state.trains.find((t) => t.id === drag!.trainId)!;
+        const c = renderer.cellCenter(endCell(train, drag.end));
+        drag.ax = c.x - p.x;
+        drag.ay = c.y - p.y - renderer.cell * 0.48;
+      }
       canvas.setPointerCapture(e.pointerId);
       opts.onChange();
     } else {
@@ -165,6 +224,7 @@ export function attachPullInput(
     if (opts.enabled && !opts.enabled()) return;
     const state = opts.getState();
     if (!state) return;
+    coarse = e.pointerType === "touch";
     const p = point(e);
     if (pointers.has(e.pointerId)) pointers.set(e.pointerId, p);
 
@@ -181,11 +241,27 @@ export function attachPullInput(
     }
 
     if (drag && e.pointerId === drag.pointerId) {
-      const cell = renderer.cellAt(p.x, p.y, state);
-      if (cell) {
-        const before = opts.getState();
-        stepToward(cell);
-        if (opts.getState() !== before) opts.onChange();
+      // Touch: ignore sub-slop jitter so a tap-to-grab doesn't nudge the train,
+      // then resolve the target through the lift anchor so the letter stays
+      // visible above the fingertip. Mouse keeps its precise 1:1 tracking.
+      if (drag.isTouch && !drag.moved) {
+        if (Math.hypot(p.x - drag.sx, p.y - drag.sy) <= TAP_SLOP) return;
+        drag.moved = true;
+      }
+      const before = opts.getState();
+      const cell = renderer.cellAt(p.x + drag.ax, p.y + drag.ay, state);
+      if (cell) stepToward(cell);
+      if (drag.isTouch && drag.moved) {
+        // Keep the loupe centred on the tile being pulled and following the
+        // finger, redrawing every move (even between cell steps) so it glides.
+        const cur = opts.getState();
+        const t = cur?.trains.find((tr) => tr.id === drag!.trainId);
+        renderer.loupe = t
+          ? { fx: p.x, fy: p.y, focus: endCell(t, drag.end) }
+          : null;
+        opts.onChange();
+      } else if (opts.getState() !== before) {
+        opts.onChange();
       }
       return;
     }
@@ -227,6 +303,7 @@ export function attachPullInput(
 
     if (drag && e.pointerId === drag.pointerId) {
       drag = null;
+      renderer.loupe = null;
       opts.onChange();
       return;
     }
@@ -267,6 +344,7 @@ export function attachPullInput(
       pan = null;
       pinch = null;
       pointers.clear();
+      renderer.loupe = null;
     },
     currentDrag: () =>
       drag ? { trainId: drag.trainId, end: drag.end } : null,

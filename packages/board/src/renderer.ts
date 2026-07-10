@@ -53,6 +53,14 @@ export class Renderer {
   private maxZoom = 4;
   /** Content bounding box (in grid cells) and viewport size, cached by layout. */
   private view = { minX: 0, minY: 0, bw: 1, bh: 1, w: 1, h: 1 };
+  /** Device pixel ratio captured by layout (for the loupe's canvas sampling). */
+  private dpr = 1;
+  /**
+   * Active touch "loupe": a circular magnifier over the tile being pulled, so
+   * a fingertip never hides the letter. Set/cleared by the input module; null
+   * when not dragging with a finger.
+   */
+  loupe: { fx: number; fy: number; focus: Vec } | null = null;
 
   private stipplePattern: CanvasPattern | null = null;
   private trackPattern: CanvasPattern | null = null;
@@ -68,6 +76,7 @@ export class Renderer {
    */
   layout(state: GameState): void {
     const dpr = window.devicePixelRatio || 1;
+    this.dpr = dpr;
     const w = this.canvas.clientWidth;
     const h = this.canvas.clientHeight;
     this.canvas.width = Math.round(w * dpr);
@@ -240,6 +249,68 @@ export class Renderer {
     this.drawHints(state);
     this.drawFixedBlocks(state);
     this.drawTrains(state, drag);
+    if (this.loupe) this.drawLoupe();
+  }
+
+  /**
+   * Circular magnifier over the tile currently being pulled, offset away from
+   * the fingertip. It re-samples the just-drawn board (a magnified copy of the
+   * canvas), so it always matches exactly what's on the board.
+   */
+  private drawLoupe(): void {
+    const { ctx, canvas, dpr } = this;
+    const lp = this.loupe!;
+    const R = 58; // bubble radius, CSS px
+    const mag = 1.9;
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+
+    // Focus point = centre of the pulled cell, in CSS px.
+    const focus = this.cellCenter(lp.focus);
+
+    // Park the bubble above the finger; flip below near the top edge; clamp in.
+    const gap = R + 34;
+    let bx = lp.fx;
+    let by = lp.fy - gap;
+    if (by - R < 6) by = lp.fy + gap;
+    bx = Math.min(Math.max(bx, R + 6), w - R - 6);
+    by = Math.min(Math.max(by, R + 6), h - R - 6);
+
+    // Magnified board copy, clipped to the circle. Sample rect is in device px.
+    const srcHalf = R / mag;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(bx, by, R, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(
+      canvas,
+      (focus.x - srcHalf) * dpr,
+      (focus.y - srcHalf) * dpr,
+      2 * srcHalf * dpr,
+      2 * srcHalf * dpr,
+      bx - R,
+      by - R,
+      2 * R,
+      2 * R,
+    );
+    ctx.restore();
+
+    // Rim: a soft-shadowed white ring with a thin dark inner line.
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(bx, by, R, 0, Math.PI * 2);
+    ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+    ctx.shadowBlur = 10;
+    ctx.shadowOffsetY = 3;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#fdfdfd";
+    ctx.stroke();
+    ctx.shadowColor = "transparent";
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "rgba(60, 65, 70, 0.5)";
+    ctx.stroke();
+    ctx.restore();
   }
 
   /**
