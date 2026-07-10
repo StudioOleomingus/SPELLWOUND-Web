@@ -61,6 +61,8 @@ export class Renderer {
    * when not dragging with a finger.
    */
   loupe: { fx: number; fy: number; focus: Vec } | null = null;
+  /** User preference: draw the loupe at all. Toggled from the player HUD. */
+  loupeEnabled = true;
 
   private stipplePattern: CanvasPattern | null = null;
   private trackPattern: CanvasPattern | null = null;
@@ -249,7 +251,7 @@ export class Renderer {
     this.drawHints(state);
     this.drawFixedBlocks(state);
     this.drawTrains(state, drag);
-    if (this.loupe) this.drawLoupe();
+    if (this.loupe && this.loupeEnabled) this.drawLoupe();
   }
 
   /**
@@ -268,11 +270,14 @@ export class Renderer {
     // Focus point = centre of the pulled cell, in CSS px.
     const focus = this.cellCenter(lp.focus);
 
-    // Park the bubble above the finger; flip below near the top edge; clamp in.
-    const gap = R + 34;
-    let bx = lp.fx;
-    let by = lp.fy - gap;
-    if (by - R < 6) by = lp.fy + gap;
+    // Park the bubble up-and-to-the-side of the finger (default: up-left, so a
+    // right hand doesn't cover it). Flip to the other side / below when it
+    // would clip an edge, then clamp fully on-screen.
+    const off = R + 20;
+    let bx = lp.fx - off;
+    let by = lp.fy - off;
+    if (bx - R < 6) bx = lp.fx + off; // too close to the left → go right
+    if (by - R < 6) by = lp.fy + off; // too close to the top → go below
     bx = Math.min(Math.max(bx, R + 6), w - R - 6);
     by = Math.min(Math.max(by, R + 6), h - R - 6);
 

@@ -29,6 +29,7 @@ const removeBtn = $<HTMLButtonElement>("remove-btn");
 const zoomInBtn = $<HTMLButtonElement>("zoom-in");
 const zoomOutBtn = $<HTMLButtonElement>("zoom-out");
 const zoomResetBtn = $<HTMLButtonElement>("zoom-reset");
+const loupeToggleBtn = $<HTMLButtonElement>("loupe-toggle");
 const menuOverlay = $("menu-overlay");
 const levelsOverlay = $("levels-overlay");
 const helpOverlay = $("help-overlay");
@@ -291,6 +292,22 @@ zoomInBtn.addEventListener("click", () => zoomStep(1.5));
 zoomOutBtn.addEventListener("click", () => zoomStep(1 / 1.5));
 zoomResetBtn.addEventListener("click", () => {
   renderer.resetView();
+  render();
+});
+
+// --- loupe (drag magnifier) toggle, persisted -------------------------------
+const LOUPE_KEY = "spellwound.loupe";
+function applyLoupePref(on: boolean): void {
+  renderer.loupeEnabled = on;
+  loupeToggleBtn.classList.toggle("on", on);
+  loupeToggleBtn.setAttribute("aria-pressed", String(on));
+  loupeToggleBtn.title = on ? "Magnifier: on" : "Magnifier: off";
+}
+applyLoupePref(localStorage.getItem(LOUPE_KEY) !== "off");
+loupeToggleBtn.addEventListener("click", () => {
+  const on = !renderer.loupeEnabled;
+  localStorage.setItem(LOUPE_KEY, on ? "on" : "off");
+  applyLoupePref(on);
   render();
 });
 $("reset-btn").addEventListener("click", () => {

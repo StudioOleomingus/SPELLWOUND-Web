@@ -113,6 +113,22 @@ body {
   font-size: 18px;
 }
 
+#loupe-toggle {
+  font-size: 20px;
+}
+
+/* Active (magnifier on) state for a toggle-style zoom button. */
+.zoom-btn.on {
+  color: #fff;
+  background: var(--accent, #29abe2);
+  border-color: var(--accent, #29abe2);
+}
+
+.zoom-btn.on:hover {
+  color: #fff;
+  border-color: var(--accent, #29abe2);
+}
+
 /* --- tutorial callout --- */
 #tutorial-box {
   position: absolute;
